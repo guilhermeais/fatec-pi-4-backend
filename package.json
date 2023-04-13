@@ -1,0 +1,6 @@
+{
+  "devDependencies": {
+    "jest-cucumber": "^3.0.1",
+    "vitest": "^0.30.1"
+  }
+}
