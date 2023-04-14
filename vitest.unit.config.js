@@ -3,6 +3,11 @@ import baseConfig from './vitest.config.js'
 /**
  * Unit testing configuration for Vitest
  */
-export default mergeConfig(baseConfig, defineConfig({
-  testMatch: ['**/*.spec.js'],
-}))
+export default mergeConfig(
+  baseConfig,
+  defineConfig({
+    test: {
+      include: ['**/*.spec.js'],
+    },
+  })
+)

@@ -4,5 +4,7 @@ import baseConfig from './vitest.config.js'
  * E2E configuration for Vitest
  */
 export default mergeConfig(baseConfig, defineConfig({
-  testMatch: ['**/*.bdd-test.js'],
+  test: {
+    files: ['tests/**/*.e2e-spec.ts'],
+  }
 }))
