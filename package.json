@@ -10,6 +10,7 @@
   "devDependencies": {
     "@faker-js/faker": "^7.6.0",
     "jest-cucumber": "^3.0.1",
+    "mockdate": "^3.0.5",
     "vitest": "^0.30.1"
   },
   "scripts": {

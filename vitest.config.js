@@ -6,5 +6,6 @@ export default defineConfig({
     exclude: ['**/node_modules/**'],
     globals: true,
     passWithNoTests: true,
+    setupFiles: ['tests/jest-cucumber-config.js']
   },
 })
