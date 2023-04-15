@@ -1,5 +1,5 @@
 import { defineFeature, loadFeature } from 'jest-cucumber'
-import { SignUpUser } from '../../../src/application/usecases/signup-user'
+import { SignUpUser } from '../../../src/application/usecases/user/signup-user'
 import { UserRepositorySpy } from '../../mocks/application/repositories/user-repository.spy'
 import { HasherSpy } from '../../mocks/application/interfaces/hasher.spy'
 import { TokenGeneratorSpy } from '../../mocks/application/interfaces/token-generator.spy'
@@ -37,6 +37,7 @@ defineFeature(features, test => {
   afterAll(() => {
     MockDate.reset()
   })
+
   test('Successfully get the user token', ({ given, and, then }) => {
     const { sut, userRepositorySpy, hasherSpy, tokenGeneratorSpy } = sutFactory
 

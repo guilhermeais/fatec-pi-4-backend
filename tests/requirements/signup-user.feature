@@ -6,7 +6,7 @@ Feature: SignUp User
     And return the user and the access token
   @Skip
   Scenario: Fail to signup user by missing a property
-    Given an user missing a property, like name, addres, email, password, confirmPassword...
+    Given an user missing a property, like name, email, password, confirmPassword...
     Then an error message should be returned
   @Skip
   Scenario: Fail to signup user by invalid property

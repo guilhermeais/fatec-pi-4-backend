@@ -1,8 +1,8 @@
-import { User } from '../../domain/entities/user'
-import { EmailInUseError } from '../errors'
-import { Hasher } from '../interfaces/hasher'
-import { TokenGenerator } from '../interfaces/token-generator'
-import { UserRepository } from '../repositories/user-repository'
+import { User } from '../../../domain/entities/user'
+import { EmailInUseError } from '../../errors'
+import { Hasher } from '../../interfaces/hasher'
+import { TokenGenerator } from '../../interfaces/token-generator'
+import { UserRepository } from '../../repositories/user-repository'
 
 export class SignUpUser {
   constructor({
