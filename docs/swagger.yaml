@@ -1,0 +1,405 @@
+openapi: 3.0.3
+info:
+  title: SolarLimp API
+  description: Documentation for the SolarLimp API, which provides users information about solar incidence in a given terrain. With this API, users can retrieve data on the potential solar energy output of a particular location, including information on average daily solar radiation and other factors that affect solar energy production.
+  contact:
+    email: joaomiguelmv_04@hotmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+
+servers:
+  - description: Server
+    url: no-url
+
+tags:
+  - name: Auth
+    description: Access authorization
+  - name: Terrains
+    description: Manipulate and read terrain data
+  - name: Devices
+    description: Manipulate and read device data
+
+paths:
+  /auth/sign-up:
+    post:
+      tags:
+        - Auth
+      summary: Sign up for a new account
+      description: Creates a new user account with a username and password.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: Email for the account
+                  example: username@hotmail.com
+                username:
+                  type: string
+                  description: Username for the account
+                  example: username
+                password:
+                  type: string
+                  description: Password for the account
+                  example: password
+              required:
+                - username
+                - password
+      responses:
+        201:
+          description: Account created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SignUpResponse"
+        400:
+          description: Invalid input
+
+  /auth/sign-in:
+    post:
+      tags:
+        - Auth
+      summary: Sign in to an existing account
+      description: Allows users to sign in to an existing account with a username and password.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: Username for the account
+                  example: username
+                password:
+                  type: string
+                  description: Password for the account
+                  example: password
+              required:
+                - username
+                - password
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SignInResponse"
+        400:
+          description: Invalid input
+
+  /terrains:
+    get:
+      tags:
+        - Terrains
+      summary: Get all terrains
+      description: Retrieves a list of all terrains in the system.
+      responses:
+        200:
+          description: A list of terrains
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Terrain"
+
+    post:
+      tags:
+        - Terrains
+      summary: Create a new terrain
+      description: Creates a new terrain with the specified details.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewTerrain"
+      responses:
+        201:
+          description: Terrain created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Terrain"
+
+    put:
+      tags:
+        - Terrains
+      summary: Update an existing terrain
+      description: Updates an existing terrain with the specified details.
+      parameters:
+        - name: id
+          in: path
+          description: ID of the terrain to update
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdatedTerrain"
+      responses:
+        200:
+          description: Terrain updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpdatedTerrain"
+
+    delete:
+      tags:
+        - Terrains
+      summary: Delete a terrain
+      description: Deletes the terrain with the specified ID from the system.
+      parameters:
+        - name: id
+          in: path
+          description: ID of the terrain to delete
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: Terrain deleted successfully
+        404:
+          description: Terrain not found
+
+  /devices:
+    get:
+      tags:
+        - Devices
+      summary: Get all devices
+      description: Returns a list of all devices
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeviceList"
+    post:
+      tags:
+        - Devices
+      summary: Create a new device
+      description: Creates a new device with the specified properties
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeviceInput"
+        required: true
+      responses:
+        201:
+          description: Device created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Device"
+        400:
+          description: Invalid input
+    put:
+      tags:
+        - Devices
+      summary: Update an existing device
+      description: Updates an existing device with the specified properties
+      parameters:
+        - name: id
+          in: path
+          description: ID of the device to update
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeviceInput"
+        required: true
+      responses:
+        200:
+          description: Device updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Device"
+        400:
+          description: Invalid input
+        404:
+          description: Device not found
+    delete:
+      tags:
+        - Devices
+      summary: Delete a device
+      description: Deletes the device with the specified ID
+      parameters:
+        - name: id
+          in: path
+          description: ID of the device to delete
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        204:
+          description: Device deleted
+        404:
+          description: Device not found
+
+components:
+  schemas:
+    SignInResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          description: Token for the user
+          example: token
+        user:
+          type: object
+          properties:
+            id:
+              type: integer
+              description: ID of the user
+              example: 1
+            username:
+              type: string
+              description: Username of the user
+              example: username
+            email:
+              type: string
+              description: Email of the user
+              example: username@hotmail.com
+
+    SignUpResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: A message indicating that the account was created successfully
+          example: Account created successfully
+
+    Terrain:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier of the terrain
+          example: "123"
+        name:
+          type: string
+          description: The name of the terrain
+          example: "Terrain A"
+        location:
+          type: object
+          description: The geolocation of the terrain
+          properties:
+            latitude:
+              type: number
+              description: The latitude of the terrain
+              example: 38.736946
+            longitude:
+              type: number
+              description: The longitude of the terrain
+              example: -9.142685
+
+    NewTerrain:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the new terrain
+          example: "New Terrain"
+        location:
+          type: object
+          description: The geolocation of the terrain
+          properties:
+            latitude:
+              type: number
+              description: The latitude of the terrain
+              example: 38.736946
+            longitude:
+              type: number
+              description: The longitude of the terrain
+              example: -9.142685
+
+    UpdatedTerrain:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The updated name of the terrain
+          example: "Updated Terrain"
+        location:
+          type: object
+          description: The geolocation of the terrain
+          properties:
+            latitude:
+              type: number
+              description: The latitude of the terrain
+              example: 38.736946
+            longitude:
+              type: number
+              description: The longitude of the terrain
+              example: -9.142685
+
+    Device:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: ID of the device
+        description:
+          type: string
+          description: Description of the device
+          example: "Device 1"
+        location:
+          type: object
+          properties:
+            latitude:
+              type: number
+              format: float
+              description: Latitude of the device location
+              example: 37.7749
+            longitude:
+              type: number
+              format: float
+              description: Longitude of the device location
+              example: -122.4194
+      required:
+        - description
+        - location
+    DeviceInput:
+      type: object
+      properties:
+        description:
+          type: string
+          description: Description of the device
+          example: "Device 1"
+        location:
+          type: object
+          properties:
+            latitude:
+              type: number
+              format: float
+              description: Latitude of the device location
+              example: 37.7749
+            longitude:
+              type: number
+              format: float
+              description: Longitude of the device location
+              example: -122.4194
+      required:
+        - description
+        - location
+
+    DeviceList:
+      type: array
+      items:
+        $ref: "#/components/schemas/Device"
