@@ -15,7 +15,7 @@ defineFeature(features, test => {
     const userRepositorySpy = new UserRepositorySpy()
     const hasherSpy = new HasherSpy()
     const tokenGeneratorSpy = new TokenGeneratorSpy()
-
+    userRepositorySpy.findByEmailResult = null
     const sut = new SignUpUser({
       userRepository: userRepositorySpy,
       hasher: hasherSpy,
