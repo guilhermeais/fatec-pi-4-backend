@@ -17,7 +17,7 @@ export class SignUpUser {
 
   async execute({ name, address, email, password }) {
     const emailInUse = await this.userRepository.findByEmail(email)
-    if (!emailInUse) {
+    if (!!emailInUse) {
       throw new EmailInUseError(email)
     }
 
@@ -25,6 +25,14 @@ export class SignUpUser {
     const user = User.create({ name, address, email, password: hashedPassword })
     await this.userRepository.save(user)
     const accessToken = await this.tokenGenerator.generate({ id: user.id })
-    return { user, accessToken }
+    return {
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        address: user.address,
+      },
+      accessToken,
+    }
   }
 }
