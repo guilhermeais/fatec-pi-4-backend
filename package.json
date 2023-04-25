@@ -2,7 +2,7 @@
   "name": "fatec-pi-4-backend",
   "version": "1.0.0",
   "description": "[Fatec Franca - DSM] Projeto Integrador",
-  "main": "main/index.js",
+  "main": "src/main/index.js",
   "type": "module",
   "directories": {
     "test": "tests"
@@ -11,16 +11,18 @@
     "@faker-js/faker": "^7.6.0",
     "jest-cucumber": "^3.0.1",
     "mockdate": "^3.0.5",
+    "supertest": "^6.3.3",
     "vitest": "^0.30.1"
   },
   "scripts": {
+    "start": "node --experimental-modules --es-module-specifier-resolution=node src/main/index",
     "test": "vitest",
     "test:bdd": "vitest --config ./vitest.bdd.config.js",
     "test:unit": "vitest --config ./vitest.unit.config.js",
     "test:e2e": "vitest --config ./vitest.e2e.config.js"
   },
   "engines": {
-    "node": ">=16.0.0"
+    "node": "16.0.0"
   },
   "repository": {
     "type": "git",
@@ -37,5 +39,10 @@
   "bugs": {
     "url": "https://github.com/guilhermeais/fatec-pi-4-backend/issues"
   },
-  "homepage": "https://github.com/guilhermeais/fatec-pi-4-backend#readme"
+  "homepage": "https://github.com/guilhermeais/fatec-pi-4-backend#readme",
+  "dependencies": {
+    "@hapi/hapi": "^21.3.2",
+    "bcrypt": "^5.1.0",
+    "jsonwebtoken": "^9.0.0"
+  }
 }
