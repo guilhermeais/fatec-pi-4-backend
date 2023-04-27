@@ -12,4 +12,17 @@ export class Hasher {
       methodName: this.hash.name,
     })
   }
+
+  /**
+   * 
+   * @param {string} password
+   * @param {string} hashedPassword
+   * @returns {Promise<boolean>}
+   */
+  async compare(password, hashedPassword) {
+    throw new NotImplementedError({
+      className: this.constructor.name,
+      methodName: this.compare.name,
+    })
+  }
 }

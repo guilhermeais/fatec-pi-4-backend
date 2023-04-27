@@ -24,5 +24,10 @@ export class HttpController {
       '/auth/sign-up',
       userController.signup.bind(userController)
     )
+
+    this.httpServer.post(
+      '/auth/sign-in',
+      userController.signin.bind(userController)
+    )
   }
 }
