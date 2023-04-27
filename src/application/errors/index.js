@@ -1,3 +1,5 @@
 export * from './base-error'
 export * from './not-implemented-error'
 export * from './email-in-use-error'
+export * from './user-not-found'
+export * from './invalid-password'
