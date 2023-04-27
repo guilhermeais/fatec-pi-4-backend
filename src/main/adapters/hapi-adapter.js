@@ -50,9 +50,10 @@ export class HapiHTTPServer extends BaseHTTPServer {
     this.#app.route({
       method: 'POST',
       path,
-      handler: (request, reply) => {
+      handler: async (request, reply) => {
+        console.info('[HapiHTTPServer] request.payload', request.payload)
         try {
-          const response = callback({
+          const response = await callback({
             ...request.payload,
           })
 
@@ -60,7 +61,14 @@ export class HapiHTTPServer extends BaseHTTPServer {
         } catch (error) {
           console.error(`[HapiHTTPServer]: ${error.message}`, error)
           const statusCode = error.statusCode || 500
-          return reply.response(error).code(statusCode)
+          if (error.isOperational) {
+            return reply.response({
+              error: error.message,
+            }).code(statusCode)
+          }
+          return reply.response({
+            error: 'Internal Server Error',
+          }).code(statusCode)
         }
       },
     })
