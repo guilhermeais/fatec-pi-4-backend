@@ -11,6 +11,7 @@
     "@faker-js/faker": "^7.6.0",
     "jest-cucumber": "^3.0.1",
     "mockdate": "^3.0.5",
+    "nodemon": "^2.0.22",
     "supertest": "^6.3.3",
     "vitest": "^0.30.1"
   },
@@ -19,7 +20,8 @@
     "test": "vitest",
     "test:bdd": "vitest --config ./vitest.bdd.config.js",
     "test:unit": "vitest --config ./vitest.unit.config.js",
-    "test:e2e": "vitest --config ./vitest.e2e.config.js"
+    "test:e2e": "vitest --config ./vitest.e2e.config.js",
+    "start:debug": "nodemon --experimental-specifier-resolution=node -L --watch  src/main/server.js --inspect=0.0.0.0:9222 --nolazy ./src/main/index.js"
   },
   "engines": {
     "node": "16.0.0"
@@ -43,6 +45,8 @@
   "dependencies": {
     "@hapi/hapi": "^21.3.2",
     "bcrypt": "^5.1.0",
+    "dotenv": "^16.0.3",
+    "firebase": "^9.20.0",
     "jsonwebtoken": "^9.0.0"
   }
 }
