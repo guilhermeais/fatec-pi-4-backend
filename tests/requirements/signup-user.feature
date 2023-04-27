@@ -1,7 +1,7 @@
 Feature: SignUp User
 
   Scenario: Successfully get the user token
-    Given a valid user with name, addres, email, password, confirmPassword
+    Given a valid user with name, addres, email, password
     Then the user will be created and will be added to the account database
     And return the user and the access token
   @Skip
