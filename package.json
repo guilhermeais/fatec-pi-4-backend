@@ -9,6 +9,8 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^7.6.0",
+    "@firebase/rules-unit-testing": "^2.0.7",
+    "cross-env": "^7.0.3",
     "jest-cucumber": "^3.0.1",
     "mockdate": "^3.0.5",
     "nodemon": "^2.0.22",
@@ -19,19 +21,15 @@
     "start": "node --experimental-modules --es-module-specifier-resolution=node src/main/index",
     "test": "cross-env NODE_ENV=testing vitest",
     "test:unit": "cross-env NODE_ENV=testing vitest --config ./vitest.unit.config.js",
-
     "pretest:bdd": "npm run firebase:emulator",
     "test:bdd": "cross-env NODE_ENV=testing vitest --config ./vitest.bdd.config.js",
     "posttest:bdd": "docker-compose down",
-
     "pretest:coverage": "npm run firebase:emulator",
     "test:coverage": "npm run test -- --coverage",
     "posttest:coverage": "docker-compose down",
-
     "pretest:e2e": "npm run firebase:emulator",
     "test:e2e": "vitest --config ./vitest.e2e.config.js",
     "posttest:e2e": "docker-compose down",
-    
     "start:debug": "nodemon --experimental-specifier-resolution=node -L --watch  src/main/server.js --inspect=0.0.0.0:9222 --nolazy ./src/main/index.js",
     "firebase:emulator": "docker-compose up -d firebase-emulator && bash wait-for-firebase-emulator-container.sh"
   },
