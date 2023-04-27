@@ -17,11 +17,23 @@
   },
   "scripts": {
     "start": "node --experimental-modules --es-module-specifier-resolution=node src/main/index",
-    "test": "vitest",
-    "test:bdd": "vitest --config ./vitest.bdd.config.js",
-    "test:unit": "vitest --config ./vitest.unit.config.js",
+    "test": "cross-env NODE_ENV=testing vitest",
+    "test:unit": "cross-env NODE_ENV=testing vitest --config ./vitest.unit.config.js",
+
+    "pretest:bdd": "npm run firebase:emulator",
+    "test:bdd": "cross-env NODE_ENV=testing vitest --config ./vitest.bdd.config.js",
+    "posttest:bdd": "docker-compose down",
+
+    "pretest:coverage": "npm run firebase:emulator",
+    "test:coverage": "npm run test -- --coverage",
+    "posttest:coverage": "docker-compose down",
+
+    "pretest:e2e": "npm run firebase:emulator",
     "test:e2e": "vitest --config ./vitest.e2e.config.js",
-    "start:debug": "nodemon --experimental-specifier-resolution=node -L --watch  src/main/server.js --inspect=0.0.0.0:9222 --nolazy ./src/main/index.js"
+    "posttest:e2e": "docker-compose down",
+    
+    "start:debug": "nodemon --experimental-specifier-resolution=node -L --watch  src/main/server.js --inspect=0.0.0.0:9222 --nolazy ./src/main/index.js",
+    "firebase:emulator": "docker-compose up -d firebase-emulator && bash wait-for-firebase-emulator-container.sh"
   },
   "engines": {
     "node": "16.0.0"
