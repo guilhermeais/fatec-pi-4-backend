@@ -1,10 +1,10 @@
-import { SignUpUser } from '../../../src/application/usecases/user/signup-user'
-import { HasherSpy } from '../../mocks/application/interfaces/hasher.spy'
-import { TokenGeneratorSpy } from '../../mocks/application/interfaces/token-generator.spy'
-import { UserRepositorySpy } from '../../mocks/application/repositories/user-repository.spy'
+import { SignUpUser } from '../../../../src/application/usecases/user/signup-user'
+import { HasherSpy } from '../../../mocks/application/interfaces/hasher.spy'
+import { TokenGeneratorSpy } from '../../../mocks/application/interfaces/token-generator.spy'
+import { UserRepositorySpy } from '../../../mocks/application/repositories/user-repository.spy'
 import MockDate from 'mockdate'
-import { mockUser } from '../../mocks/domain/entities/user.mock'
-import { EmailInUseError } from '../../../src/application/errors'
+import { mockUser } from '../../../mocks/domain/entities/user.mock'
+import { EmailInUseError } from '../../../../src/application/errors'
 
 describe('SignUpUser', () => {
   function makeSut() {
