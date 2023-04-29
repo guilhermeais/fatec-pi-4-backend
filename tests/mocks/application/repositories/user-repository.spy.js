@@ -9,6 +9,9 @@ export class UserRepositorySpy extends UserRepository {
 
     this.findByEmailParams = null
     this.findByEmailResult = mockUser()
+
+    this.findByIdParams = null
+    this.findByIdResult = mockUser()
   }
 
   async save(user) {
@@ -19,5 +22,10 @@ export class UserRepositorySpy extends UserRepository {
   async findByEmail(email) {
     this.findByEmailParams = email
     return Promise.resolve(this.findByEmailResult)
+  }
+
+  async findById(id) {
+    this.findByIdParams = id
+    return Promise.resolve(this.findByIdResult)
   }
 }

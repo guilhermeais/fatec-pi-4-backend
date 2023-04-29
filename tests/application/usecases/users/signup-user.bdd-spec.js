@@ -1,13 +1,13 @@
 import { defineFeature, loadFeature } from 'jest-cucumber'
 import supertest from 'supertest'
-import app from '../../../src/main/app'
-import { mockUser } from '../../mocks/domain/entities/user.mock'
+import app from '../../../../src/main/app'
+import { mockUser } from '../../../mocks/domain/entities/user.mock'
 const features = loadFeature('../../requirements/signup-user.feature', {
   loadRelativePath: true,
 })
 import MockDate from 'mockdate'
-import firebaseTestHelpers from '../../firebase-test-helpers'
-import { database } from '../../../src/infra/data/helpers/firebase-helpers'
+import firebaseTestHelpers from '../../../firebase-test-helpers'
+import { database } from '../../../../src/infra/data/helpers/firebase-helpers'
 
 defineFeature(features, test => {
 

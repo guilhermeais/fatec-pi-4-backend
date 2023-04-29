@@ -25,4 +25,16 @@ export class UserRepository {
       methodName: this.findByEmail.name,
     })
   }
+
+  /**
+   *
+   * @param {string} id
+   * @returns {Promise<User>}
+   */
+  async findById(id) {
+    throw new NotImplementedError({
+      className: this.constructor.name,
+      methodName: this.findById.name,
+    })
+  }
 }
