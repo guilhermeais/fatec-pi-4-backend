@@ -1,4 +1,4 @@
-import { InvalidTerrain } from '../../../../src/application/errors'
+import { InvalidLocation, InvalidTerrain } from '../../../../src/application/errors'
 import { CreateTerrain } from '../../../../src/application/usecases/terrain/create-terrain'
 import { TerrainRepositorySpy } from '../../../mocks/application/repositories/terrain-repository.spy'
 import { UserRepositorySpy } from '../../../mocks/application/repositories/user-repository.spy'
@@ -54,5 +54,23 @@ describe('CreateTerrain', () => {
     const terrain = await sut.execute(terrainData)
 
     expect(terrain).toEqual(terrainData)
+  });
+
+  test('should throw InvalidLocation if location is invalid', async () => {
+    const { sut } = makeSut()
+
+    const terrainData = mockTerrain()
+    terrainData.locations = [
+      {
+        longitude: null,
+        latitude: null,
+      },
+    ]
+
+    const promise = sut.execute(terrainData)
+
+    await expect(promise).rejects.toThrow(
+      new InvalidLocation('Longitude não informada.')
+    )
   });
 })
