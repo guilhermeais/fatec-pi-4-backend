@@ -47,5 +47,9 @@ export class HttpController {
       '/terrains/:id',
       terrainController.updateTerrain.bind(terrainController)
     )
+    this.httpServer.delete(
+      '/terrains/:id',
+      terrainController.deleteTerrainById.bind(terrainController)
+    )
   }
 }
