@@ -1,16 +1,19 @@
 export class TerrainController {
   #createTerrainUseCase
   #updateTerrainUseCase
+  #readTerrainUseCase
   /**
    *
    * @param {{
    *  createTerrainUseCase: import('../usecases/terrain/create-terrain').CreateTerrain,
    *  updateTerrainUseCase: import('../usecases/terrain/update-terrain-by-id').UpdateTerrainById
+   *  readTerrainUseCase: import('../usecases/terrain/read-terrain-by-id').ReadTerrain
    * }} dependencies
    */
-  constructor({ createTerrainUseCase, updateTerrainUseCase } = {}) {
+  constructor({ createTerrainUseCase, updateTerrainUseCase, readTerrainUseCase } = {}) {
     this.#createTerrainUseCase = createTerrainUseCase
     this.#updateTerrainUseCase = updateTerrainUseCase
+    this.#readTerrainUseCase = readTerrainUseCase
   }
 
   async createTerrain(request) {
@@ -32,6 +35,14 @@ export class TerrainController {
       name,
       locations,
     })
+
+    return result
+  }
+
+  async readTerrainById(request) {
+    const { id } = request
+
+    const result = await this.#readTerrainUseCase.execute(id)
 
     return result
   }
