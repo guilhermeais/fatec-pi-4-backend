@@ -1,14 +1,37 @@
-import { NotImplementedError } from '../errors';
+import { NotImplementedError } from '../errors'
 
 export class TerrainRepository {
   /**
    * @param { import('../../domain/entities/terrain').Terrain } terrain
    * @returns { Promise<import('../../domain/entities/terrain').Terrain> }
    */
-   save(terrain) {
+  save(terrain) {
     throw new NotImplementedError({
       className: 'TerrainRepository',
-      methodName: 'createTerrain'
+      methodName: 'createTerrain',
+    })
+  }
+  /**
+   * @param {string} id
+   * @param { import('../../domain/entities/terrain').Terrain } terrain
+   * @returns { Promise<import('../../domain/entities/terrain').Terrain> }
+   */
+  update(id, terrain) {
+    throw new NotImplementedError({
+      className: 'TerrainRepository',
+      methodName: 'updateTerrain',
+    })
+  }
+
+  /**
+   * 
+   * @param {string} id
+   * @returns { Promise<import('../../domain/entities/terrain').Terrain> } 
+   */
+  findById(id) {
+    throw new NotImplementedError({
+      className: 'TerrainRepository',
+      methodName: 'findTerrainById',
     })
   }
 }
