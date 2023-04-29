@@ -35,6 +35,13 @@ export class BaseHTTPServer {
     });
   }
 
+  patch(path, callback) {
+    throw new NotImplementedError({
+      methodName: 'patch',
+      className: this.constructor.name,
+    });
+  }
+
   async listen(port, callback) {
     throw new NotImplementedError({
       methodName: 'listen',

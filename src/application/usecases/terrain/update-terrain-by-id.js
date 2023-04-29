@@ -7,7 +7,7 @@ export class UpdateTerrainById {
     this.terrainRepository = terrainRepository
   }
 
-  async execute(id, { name, locations }) {
+  async execute(id, { name, locations = [] }) {
     const terrain = await this.terrainRepository.findById(id)
 
     if (!terrain) {

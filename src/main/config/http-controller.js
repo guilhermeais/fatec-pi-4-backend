@@ -39,5 +39,9 @@ export class HttpController {
       '/terrains',
       terrainController.createTerrain.bind(terrainController)
     )
+    this.httpServer.patch(
+      '/terrains/:id',
+      terrainController.updateTerrain.bind(terrainController)
+    )
   }
 }

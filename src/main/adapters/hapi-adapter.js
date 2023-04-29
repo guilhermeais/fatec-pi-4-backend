@@ -17,7 +17,17 @@ export class HapiHTTPServer extends BaseHTTPServer {
     return this.#app.listener
   }
 
+  #logRoutes() {
+    console.info('[HapiHTTPServer]: Routes:')
+    this.#app.table().forEach(route => {
+      console.info(
+        `[HapiHTTPServer]: ${route.method.toUpperCase()} ${route.path}`
+      )
+    })
+  }
+
   async listen(port, callback) {
+    this.#logRoutes()
     await this.#app.start()
     console.log(`Server running on ${this.#app.info.uri}`)
   }
@@ -26,13 +36,30 @@ export class HapiHTTPServer extends BaseHTTPServer {
     await this.#app.stop()
   }
 
+  #handleError(error, reply) {
+    console.error(`[HapiHTTPServer]: ${error.message}`, error)
+    const statusCode = error.statusCode || 500
+    if (error.isOperational) {
+      return reply
+        .response({
+          error: error.message,
+        })
+        .code(statusCode)
+    }
+    return reply
+      .response({
+        error: 'Internal Server Error',
+      })
+      .code(statusCode)
+  }
+
   get(path, callback) {
     this.#app.route({
       method: 'GET',
-      path,
-      handler: (request, reply) => {
+      path: this.#replaceIfHasParams(path),
+      handler: async (request, reply) => {
         try {
-          const response = callback({
+          const response = await callback({
             ...request.query,
             ...request.params,
           })
@@ -40,7 +67,7 @@ export class HapiHTTPServer extends BaseHTTPServer {
           return response
         } catch (error) {
           console.error(`[HapiHTTPServer]: ${error.message}`, error)
-          return reply.response(error).code(500)
+          return this.#handleError(error, reply)
         }
       },
     })
@@ -49,7 +76,7 @@ export class HapiHTTPServer extends BaseHTTPServer {
   post(path, callback) {
     this.#app.route({
       method: 'POST',
-      path,
+      path: this.#replaceIfHasParams(path),
       handler: async (request, reply) => {
         console.info('[HapiHTTPServer] request.payload', request.payload)
         try {
@@ -60,15 +87,7 @@ export class HapiHTTPServer extends BaseHTTPServer {
           return response
         } catch (error) {
           console.error(`[HapiHTTPServer]: ${error.message}`, error)
-          const statusCode = error.statusCode || 500
-          if (error.isOperational) {
-            return reply.response({
-              error: error.message,
-            }).code(statusCode)
-          }
-          return reply.response({
-            error: 'Internal Server Error',
-          }).code(statusCode)
+          return this.#handleError(error, reply)
         }
       },
     })
@@ -77,18 +96,38 @@ export class HapiHTTPServer extends BaseHTTPServer {
   put(path, callback) {
     this.#app.route({
       method: 'PUT',
-      path,
-      handler: (request, reply) => {
+      path: this.#replaceIfHasParams(path),
+      handler: async (request, reply) => {
         try {
-          const response = callback({
+          const response = await callback({
             ...request.payload,
-            ...request.params
+            ...request.params,
           })
 
           return response
         } catch (error) {
           console.error(`[HapiHTTPServer]: ${error.message}`, error)
-          return reply.response(error).code(500)
+          return this.#handleError(error, reply)
+        }
+      },
+    })
+  }
+
+  patch(path, callback) {
+    this.#app.route({
+      method: 'PATCH',
+      path: this.#replaceIfHasParams(path),
+      handler: async (request, reply) => {
+        try {
+          const response = await callback({
+            ...request.payload,
+            ...request.params,
+          })
+
+          return response
+        } catch (error) {
+          console.error(`[HapiHTTPServerError]: ${error.message}`, error)
+          return this.#handleError(error, reply)
         }
       },
     })
@@ -97,19 +136,28 @@ export class HapiHTTPServer extends BaseHTTPServer {
   delete(path, callback) {
     this.#app.route({
       method: 'DELETE',
-      path,
-      handler: (request, reply) => {
+      path: this.#replaceIfHasParams(path),
+      handler: async (request, reply) => {
         try {
-          const response = callback({
-            ...request.params
+          const response = await callback({
+            ...request.params,
           })
 
           return response
         } catch (error) {
           console.error(`[HapiHTTPServer]: ${error.message}`, error)
-          return reply.response(error).code(500)
+          return this.#handleError(error, reply)
         }
       },
     })
+  }
+
+  #replaceIfHasParams(path) {
+    const hasParams = path.includes(':')
+    if (hasParams) {
+      const paramMatchRegex = /:(\w+)/g
+      return path.replace(paramMatchRegex, '{$1}')
+    }
+    return path
   }
 }

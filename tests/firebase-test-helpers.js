@@ -6,7 +6,7 @@ const userAuth = {
 }
 
 class FirebaseTestHelpers {
-  async connect({ projectId = 'test-project' } = {}) {
+  async connect({ projectId = 'solar-limp' } = {}) {
     this.projectId = projectId
     this.testEnvironment = await initializeTestEnvironment({
       projectId,
