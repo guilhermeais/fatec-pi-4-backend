@@ -8,6 +8,6 @@ export class InvalidTerrain extends BaseError {
       statusCode: 400,
       isOperational: true,
     })
-    this.name = 'EmailInUseError'
+    this.name = 'InvalidTerrain'
   }
 }

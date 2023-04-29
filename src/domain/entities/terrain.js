@@ -8,7 +8,7 @@ export class Terrain extends BaseEntity {
         super(params);
 
         this.name = name;
-        this.locations = locations.map(location => new Location(location));
+        this.locations = locations?.map(location => Location.create(location)) || [];
         this.ownerId = ownerId;
     }
 

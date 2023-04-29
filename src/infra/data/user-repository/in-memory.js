@@ -13,4 +13,8 @@ export class InMemoryUserRepository extends UserRepository {
   async save(user) {
     this.users.push(user)
   }
+
+  async findById(id) {
+    return this.users.find((user) => user.id === id)
+  }
 }

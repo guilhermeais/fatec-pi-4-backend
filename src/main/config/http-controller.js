@@ -1,5 +1,6 @@
 import { makeUserController } from '../factories/users/user-controller.factory'
 import { BaseHTTPServer } from '../../infra/http/base-http-server'
+import { makeTerrainController } from '../factories/terrains/terrain-controller.factory'
 
 export class HttpController {
   constructor({ httpServer = new BaseHTTPServer() }) {
@@ -16,6 +17,7 @@ export class HttpController {
 
   registerRoutes() {
     this.#registerAuthRoutes()
+    this.#registerTerrainRoutes()
   }
 
   #registerAuthRoutes() {
@@ -28,6 +30,14 @@ export class HttpController {
     this.httpServer.post(
       '/auth/sign-in',
       userController.signin.bind(userController)
+    )
+  }
+
+  #registerTerrainRoutes() {
+    const terrainController = makeTerrainController()
+    this.httpServer.post(
+      '/terrains',
+      terrainController.createTerrain.bind(terrainController)
     )
   }
 }

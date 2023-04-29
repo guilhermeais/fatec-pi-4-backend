@@ -31,4 +31,10 @@ export class FirebaseUserRepository extends UserRepository {
     const { name, password } = value[id]
     return User.create({ id, name, email, password })
   }
+
+  async findById(id) {
+    const user = await this.#firebaseDatabase.ref(`users/${id}`).get()
+    const userExists = user.exists()
+    return userExists ? User.create(user.toJSON()) : null
+  }
 }
