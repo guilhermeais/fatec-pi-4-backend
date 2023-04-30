@@ -23,7 +23,5 @@ export class DeleteTerrainById {
     }
 
     await this.terrainRepository.delete(id)
-
-    return terrain
   }
 }
