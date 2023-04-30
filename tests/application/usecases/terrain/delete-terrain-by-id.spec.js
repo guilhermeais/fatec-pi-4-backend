@@ -1,3 +1,4 @@
+import { ForbiddenOperation, TerrainNotFoundError } from '../../../../src/application/errors'
 import { DeleteTerrainById } from '../../../../src/application/usecases/terrain/delete-terrain-by-id'
 import { TerrainRepositorySpy } from '../../../mocks/application/repositories/terrain-repository.spy'
 
@@ -27,9 +28,6 @@ describe('DeleteTerrainById', () => {
 
   test('should throw ForbiddenOperation if user trying to delete the terrain is not the terrain owner', async () => {
     const { sut, terrainRepositorySpy } = makeSut()
-    terrainRepositorySpy.findByIdResult = {
-      userId: 'another-user-id',
-    }
 
     const promise = sut.execute('valid-id', 'user-id')
 
@@ -46,7 +44,7 @@ describe('DeleteTerrainById', () => {
   test('should delete the terrain', async () => {
     const { sut, terrainRepositorySpy } = makeSut()
 
-    await sut.execute('valid-id', terrainRepositorySpy.findByIdResults.ownerId)
+    await sut.execute('valid-id', terrainRepositorySpy.findByIdResult.ownerId)
 
     expect(terrainRepositorySpy.findByIdParams).toBe('valid-id')
     expect(terrainRepositorySpy.deleteParams).toBe('valid-id')
