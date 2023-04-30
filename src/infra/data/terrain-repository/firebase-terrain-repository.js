@@ -33,4 +33,19 @@ export class FirebaseTerrainRepository extends TerrainRepository {
     return await this.#firebaseDatabase.ref(`terrains/${id}`).remove()
   }
 
+  async findByUserId(userId) {
+    const snapshot = await this.#firebaseDatabase
+      .ref('terrains')
+      .orderByChild('ownerId')
+      .equalTo(userId)
+      .once('value')
+
+    const result = snapshot.val()
+
+    if (!result) {
+      return []
+    }
+
+    return Object.values(result).map((terrain) => Terrain.create(terrain))
+  }
 }

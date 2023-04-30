@@ -13,7 +13,7 @@ export class DeleteTerrainById {
       throw new TerrainNotFoundError()
     }
 
-    const userIsNotOwner = terrain.userId !== userIdTryingToDelete
+    const userIsNotOwner = terrain.ownerId !== userIdTryingToDelete
 
     if (userIsNotOwner) {
       throw new ForbiddenOperation({
