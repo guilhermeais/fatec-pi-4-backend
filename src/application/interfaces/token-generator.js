@@ -12,4 +12,16 @@ export class TokenGenerator {
       methodName: this.generate.name,
     })
   }
+
+   /**
+   *
+   * @param {string} token
+   * @returns {Promise<object>}
+   */
+   async decrypt(token) {
+    throw new NotImplementedError({
+      className: this.constructor.name,
+      methodName: this.generate.name,
+    })
+  }
 }
