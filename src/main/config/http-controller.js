@@ -35,6 +35,10 @@ export class HttpController {
 
   #registerTerrainRoutes() {
     const terrainController = makeTerrainController()
+    this.httpServer.get(
+      '/terrains/:id',
+      terrainController.readTerrainById.bind(terrainController)
+    )
     this.httpServer.post(
       '/terrains',
       terrainController.createTerrain.bind(terrainController)
@@ -42,6 +46,10 @@ export class HttpController {
     this.httpServer.patch(
       '/terrains/:id',
       terrainController.updateTerrain.bind(terrainController)
+    )
+    this.httpServer.delete(
+      '/terrains/:id',
+      terrainController.deleteTerrainById.bind(terrainController)
     )
   }
 }

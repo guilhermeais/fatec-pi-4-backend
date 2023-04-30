@@ -34,4 +34,18 @@ export class TerrainRepository {
       methodName: 'findTerrainById',
     })
   }
+
+  /**
+   * 
+   * @param {string} id
+   * @returns { Promise<import('../../domain/entities/terrain').Terrain> } 
+   */
+  delete(id) {
+    throw new NotImplementedError({
+      className: 'TerrainRepository',
+      methodName: 'deleteTerrain',
+    })
+  }
+
+
 }

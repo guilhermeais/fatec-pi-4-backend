@@ -28,4 +28,9 @@ export class FirebaseTerrainRepository extends TerrainRepository {
     await this.#firebaseDatabase.ref(`terrains/${id}`).set(terrain)
     return terrain
   }
+
+  async delete(id) {
+    return await this.#firebaseDatabase.ref(`terrains/${id}`).remove()
+  }
+
 }
