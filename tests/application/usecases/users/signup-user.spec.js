@@ -62,7 +62,7 @@ describe('SignUpUser', () => {
 
     await sut.execute(user)
 
-    expect(hasherSpy.value).toBe(user.password)
+    expect(hasherSpy.hashParams).toBe(user.password)
   })
 
   test('should call userRepository.save with correct values', async () => {
@@ -75,7 +75,7 @@ describe('SignUpUser', () => {
     expect(userRepositorySpy.saveParams).toEqual({
       ...user,
       id: expect.any(String),
-      password: hasherSpy.result,
+      password: hasherSpy.hashResult,
     })
   })
 

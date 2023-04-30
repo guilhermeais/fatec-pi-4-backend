@@ -1,13 +1,19 @@
-import { faker } from '@faker-js/faker';
-import { Hasher } from '../../../../src/application/interfaces/hasher';
+import { faker } from '@faker-js/faker'
+import { Hasher } from '../../../../src/application/interfaces/hasher'
 
 export class HasherSpy extends Hasher {
   constructor() {
-    super();
-    this.result = faker.datatype.uuid();
+    super()
+    this.hashResult = faker.datatype.uuid()
+    this.compareResult = true
   }
   async hash(value) {
-    this.value = value;
-    return this.result;
+    this.hashParams = value
+    return this.hashResult
+  }
+
+  async compare(...params) {
+    this.compareParams = params
+    return Promise.resolve(this.compareResult)
   }
 }
