@@ -12,6 +12,8 @@ export class TerrainRepositorySpy extends TerrainRepository {
 
     this.updateParams = null
     this.updateResult = mockTerrain()
+
+    this.findByUserIdResult = [mockTerrain()]
   }
 
   async save(Terrain) {
@@ -27,5 +29,15 @@ export class TerrainRepositorySpy extends TerrainRepository {
   async update(id, Terrain) {
     this.updateParams = Terrain
     return Promise.resolve(this.updateResult)
+  }
+
+  async delete(id) {
+    this.deleteParams = id
+    return Promise.resolve()
+  }
+
+  async findByUserId(userId) {
+    this.findByUserIdParams = userId
+    return Promise.resolve(this.findByUserIdResult)
   }
 }
