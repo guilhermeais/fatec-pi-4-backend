@@ -24,9 +24,9 @@ export class TerrainRepository {
   }
 
   /**
-   * 
+   *
    * @param {string} id
-   * @returns { Promise<import('../../domain/entities/terrain').Terrain> } 
+   * @returns { Promise<import('../../domain/entities/terrain').Terrain> }
    */
   findById(id) {
     throw new NotImplementedError({
@@ -36,9 +36,9 @@ export class TerrainRepository {
   }
 
   /**
-   * 
+   *
    * @param {string} id
-   * @returns { Promise<import('../../domain/entities/terrain').Terrain> } 
+   * @returns { Promise<import('../../domain/entities/terrain').Terrain> }
    */
   delete(id) {
     throw new NotImplementedError({
@@ -47,5 +47,15 @@ export class TerrainRepository {
     })
   }
 
-
+  /**
+   *
+   * @param {string} userId
+   * @returns { Promise<import('../../domain/entities/terrain').Terrain[]> }
+   */
+  findByUserId(userId) {
+    throw new NotImplementedError({
+      className: 'TerrainRepository',
+      methodName: 'findByUserId',
+    })
+  }
 }
