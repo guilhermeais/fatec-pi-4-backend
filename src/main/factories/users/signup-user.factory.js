@@ -1,4 +1,4 @@
-import { SignUpUser } from '../../../application/usecases/user/signup-user';
+import { SignUpUser } from '../../../application/usecases/auth/signup-user';
 import { JwtTokenGenerator } from '../../../infra/cryptography/token-generator/jwt-token-generator';
 import { database } from '../../../infra/data/helpers/firebase-helpers';
 import { FirebaseUserRepository } from '../../../infra/data/user-repository/firebase-user-repository';

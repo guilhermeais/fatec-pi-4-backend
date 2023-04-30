@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker'
-import { SignInUser } from '../../../../src/application/usecases/user/signin-user'
+import { SignInUser } from '../../../../src/application/usecases/auth/signin-user'
 import { HasherSpy } from '../../../mocks/application/interfaces/hasher.spy'
 import { TokenGeneratorSpy } from '../../../mocks/application/interfaces/token-generator.spy'
 import { UserRepositorySpy } from '../../../mocks/application/repositories/user-repository.spy'

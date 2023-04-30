@@ -4,8 +4,8 @@ export class UserController {
   /**
    *
    * @param {{
-   *  signupUserUseCase: import('../usecases/user/signup-user').SignUpUser
-   *  signinUserUseCase: import('../usecases/user/signin-user').SignInUser
+   *  signupUserUseCase: import('../usecases/auth/signup-user').SignUpUser
+   *  signinUserUseCase: import('../usecases/auth/signin-user').SignInUser
    * }} dependencies
    */
   constructor({ signupUserUseCase, signinUserUseCase } = {}) {
