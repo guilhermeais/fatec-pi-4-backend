@@ -78,7 +78,7 @@ describe('UserController e2e tests', () => {
       expect(response.body).toHaveProperty('accessToken')
     })
 
-    test('should return 403 if password is invalid', async () => {
+    test('should return 401 if password is invalid', async () => {
       const user = await createUser()
 
       const response = await supertest(app.app).post('/auth/sign-in').send({
@@ -86,7 +86,7 @@ describe('UserController e2e tests', () => {
         password: 'invalid_password',
       })
 
-      expect(response.status).toBe(403)
+      expect(response.status).toBe(401)
     });
 
     test('should return 400 if email does not exists', async () => {
