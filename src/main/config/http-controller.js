@@ -1,6 +1,7 @@
 import { makeUserController } from '../factories/users/user-controller.factory'
 import { BaseHTTPServer } from '../../infra/http/base-http-server'
 import { makeTerrainController } from '../factories/terrains/terrain-controller.factory'
+import { makeAuthMiddleware } from '../factories/users/auth-middleware.factory'
 
 export class HttpController {
   constructor({ httpServer = new BaseHTTPServer() }) {
@@ -37,19 +38,32 @@ export class HttpController {
     const terrainController = makeTerrainController()
     this.httpServer.get(
       '/terrains/:id',
-      terrainController.readTerrainById.bind(terrainController)
+      terrainController.readTerrainById.bind(terrainController),
+      {
+        middlewares: [makeAuthMiddleware()],
+      }
     )
+
     this.httpServer.post(
       '/terrains',
-      terrainController.createTerrain.bind(terrainController)
+      terrainController.createTerrain.bind(terrainController),
+      {
+        middlewares: [makeAuthMiddleware()],
+      }
     )
     this.httpServer.patch(
       '/terrains/:id',
-      terrainController.updateTerrain.bind(terrainController)
+      terrainController.updateTerrain.bind(terrainController),
+      {
+        middlewares: [makeAuthMiddleware()],
+      }
     )
     this.httpServer.delete(
       '/terrains/:id',
-      terrainController.deleteTerrainById.bind(terrainController)
+      terrainController.deleteTerrainById.bind(terrainController),
+      {
+        middlewares: [makeAuthMiddleware()],
+      }
     )
   }
 }
