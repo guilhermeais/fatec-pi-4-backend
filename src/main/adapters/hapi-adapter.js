@@ -46,6 +46,7 @@ export class HapiHTTPServer extends BaseHTTPServer {
         })
         .code(statusCode)
     }
+
     return reply
       .response({
         error: 'Internal Server Error',
@@ -53,15 +54,53 @@ export class HapiHTTPServer extends BaseHTTPServer {
       .code(statusCode)
   }
 
-  get(path, callback) {
+  #adaptMiddlewares(middlewares) {
+    return middlewares.map(middleware => {
+      return async request => {
+        const accessToken =
+          request.headers.authorization ||
+          request.headers['x-access-token'] ||
+          ''
+
+        const response = await middleware.handle({
+          ...request.payload,
+          ...request.params,
+          accessToken,
+        })
+        return response
+      }
+    })
+  }
+
+  #replaceIfHasParams(path) {
+    const hasParams = path.includes(':')
+    if (hasParams) {
+      const paramMatchRegex = /:(\w+)/g
+      return path.replace(paramMatchRegex, '{$1}')
+    }
+    return path
+  }
+
+  get(path, callback, { middlewares = [] } = {}) {
     this.#app.route({
       method: 'GET',
       path: this.#replaceIfHasParams(path),
       handler: async (request, reply) => {
         try {
+          if (middlewares) {
+            const adaptedMiddlewares = this.#adaptMiddlewares(middlewares)
+
+            await Promise.all(
+              adaptedMiddlewares.map(
+                async middleware => await middleware(request, reply)
+              )
+            )
+          }
+
           const response = await callback({
             ...request.query,
             ...request.params,
+            ...Object.assign({}, Object.values(request.pre)),
           })
 
           return response
@@ -73,13 +112,23 @@ export class HapiHTTPServer extends BaseHTTPServer {
     })
   }
 
-  post(path, callback) {
+  post(path, callback, { middlewares = [] } = {}) {
     this.#app.route({
       method: 'POST',
       path: this.#replaceIfHasParams(path),
       handler: async (request, reply) => {
         console.info('[HapiHTTPServer] request.payload', request.payload)
         try {
+          if (middlewares) {
+            const adaptedMiddlewares = this.#adaptMiddlewares(middlewares)
+
+            await Promise.all(
+              adaptedMiddlewares.map(
+                async middleware => await middleware(request, reply)
+              )
+            )
+          }
+
           const response = await callback({
             ...request.payload,
           })
@@ -93,12 +142,22 @@ export class HapiHTTPServer extends BaseHTTPServer {
     })
   }
 
-  put(path, callback) {
+  put(path, callback, { middlewares = [] } = {}) {
     this.#app.route({
       method: 'PUT',
       path: this.#replaceIfHasParams(path),
       handler: async (request, reply) => {
         try {
+          if (middlewares) {
+            const adaptedMiddlewares = this.#adaptMiddlewares(middlewares)
+
+            await Promise.all(
+              adaptedMiddlewares.map(
+                async middleware => await middleware(request, reply)
+              )
+            )
+          }
+
           const response = await callback({
             ...request.payload,
             ...request.params,
@@ -113,12 +172,22 @@ export class HapiHTTPServer extends BaseHTTPServer {
     })
   }
 
-  patch(path, callback) {
+  patch(path, callback, { middlewares = [] } = {}) {
     this.#app.route({
       method: 'PATCH',
       path: this.#replaceIfHasParams(path),
       handler: async (request, reply) => {
         try {
+          if (middlewares) {
+            const adaptedMiddlewares = this.#adaptMiddlewares(middlewares)
+
+            await Promise.all(
+              adaptedMiddlewares.map(
+                async middleware => await middleware(request, reply)
+              )
+            )
+          }
+
           const response = await callback({
             ...request.payload,
             ...request.params,
@@ -133,12 +202,22 @@ export class HapiHTTPServer extends BaseHTTPServer {
     })
   }
 
-  delete(path, callback) {
+  delete(path, callback, { middlewares = [] } = {}) {
     this.#app.route({
       method: 'DELETE',
       path: this.#replaceIfHasParams(path),
       handler: async (request, reply) => {
         try {
+          if (middlewares) {
+            const adaptedMiddlewares = this.#adaptMiddlewares(middlewares)
+
+            await Promise.all(
+              adaptedMiddlewares.map(
+                async middleware => await middleware(request, reply)
+              )
+            )
+          }
+
           const response = await callback({
             ...request.params,
           })
@@ -150,14 +229,5 @@ export class HapiHTTPServer extends BaseHTTPServer {
         }
       },
     })
-  }
-
-  #replaceIfHasParams(path) {
-    const hasParams = path.includes(':')
-    if (hasParams) {
-      const paramMatchRegex = /:(\w+)/g
-      return path.replace(paramMatchRegex, '{$1}')
-    }
-    return path
   }
 }
