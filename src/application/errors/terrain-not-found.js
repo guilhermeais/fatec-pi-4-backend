@@ -5,7 +5,7 @@ export class TerrainNotFoundError extends BaseError {
     super({
       message: `Terreno não encontrado!`,
       action: "Tente novamente mais tarde.",
-      statusCode: 400,
+      statusCode: 404,
       isOperational: true,
     });
     this.name = "TerrainNotFoundError";

@@ -6,14 +6,14 @@ export class DeleteTerrainById {
     this.terrainRepository = terrainRepository
   }
 
-  async execute(id, userIdTryingToDelete) {
+  async execute(id, userTryingToDelete) {
     const terrain = await this.terrainRepository.findById(id)
 
     if (!terrain) {
       throw new TerrainNotFoundError()
     }
 
-    const userIsNotOwner = terrain.ownerId !== userIdTryingToDelete
+    const userIsNotOwner = terrain.ownerId !== userTryingToDelete.id
 
     if (userIsNotOwner) {
       throw new ForbiddenOperation({

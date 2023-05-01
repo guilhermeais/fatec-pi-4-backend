@@ -239,7 +239,7 @@ export class HapiHTTPServer extends BaseHTTPServer {
             ...this.#requestPreToPayload(request),
           })
 
-          return response
+          return response || reply.response().code(204)
         } catch (error) {
           console.error(`[HapiHTTPServer]: ${error.message}`, error)
           return this.#handleError(error, reply)

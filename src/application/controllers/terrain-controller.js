@@ -29,10 +29,7 @@ export class TerrainController {
   }
 
   async createTerrain(request) {
-    const {
-      name,
-      locations,
-    } = request
+    const { name, locations } = request
 
     const result = await this.#createTerrainUseCase.execute({
       ownerId: request.user.id,
@@ -46,10 +43,14 @@ export class TerrainController {
   async updateTerrain(request) {
     const { id, name, locations } = request
 
-    const result = await this.#updateTerrainUseCase.execute(id, {
-      name,
-      locations,
-    })
+    const result = await this.#updateTerrainUseCase.execute(
+      id,
+      {
+        name,
+        locations,
+      },
+      request.user
+    )
 
     return result
   }
@@ -69,8 +70,8 @@ export class TerrainController {
   }
 
   async deleteTerrainById(request) {
-    const { id } = request
-    const result = await this.#deleteTerrainUseCase.execute(id)
+    const { id, user } = request
+    const result = await this.#deleteTerrainUseCase.execute(id, user)
 
     return result
   }

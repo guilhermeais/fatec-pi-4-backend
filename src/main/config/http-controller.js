@@ -37,8 +37,8 @@ export class HttpController {
   #registerTerrainRoutes() {
     const terrainController = makeTerrainController()
     this.httpServer.get(
-      '/terrains/:id',
-      terrainController.readTerrainById.bind(terrainController),
+      '/terrains',
+      terrainController.readUserTerrains.bind(terrainController),
       {
         middlewares: [makeAuthMiddleware()],
       }

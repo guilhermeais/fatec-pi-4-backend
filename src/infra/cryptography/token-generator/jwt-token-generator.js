@@ -19,6 +19,7 @@ export class JwtTokenGenerator extends TokenGenerator {
   }
 
   async decrypt(accessToken) {
-    return jwt.decode(accessToken, this.secret)
+    const isVerified = jwt.verify(accessToken, this.secret)
+    return isVerified && jwt.decode(accessToken, this.secret,)
   }
 }
