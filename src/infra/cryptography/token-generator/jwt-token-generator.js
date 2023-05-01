@@ -13,7 +13,12 @@ export class JwtTokenGenerator extends TokenGenerator {
     this.secret = secret
     this.expiresIn = expiresIn
   }
+
   async generate(payload) {
     return jwt.sign(payload, this.secret, { expiresIn: this.expiresIn })
+  }
+
+  async decrypt(accessToken) {
+    return jwt.decode(accessToken, this.secret)
   }
 }
