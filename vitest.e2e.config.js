@@ -6,6 +6,8 @@ import baseConfig from './vitest.config.js'
 export default mergeConfig(baseConfig, defineConfig({
   test: {
     include: ['**/*.e2e-spec.js'],
-    maxConcurrency: 1
+    maxConcurrency: 1,
+    maxThreads: 1,
+    minThreads: 1,
   }
 }))
