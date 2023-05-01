@@ -43,6 +43,7 @@ export class HapiHTTPServer extends BaseHTTPServer {
       return reply
         .response({
           error: error.message,
+          action: error?.action,
         })
         .code(statusCode)
     }
@@ -65,11 +66,33 @@ export class HapiHTTPServer extends BaseHTTPServer {
         const response = await middleware.handle({
           ...request.payload,
           ...request.params,
+          ...request.query,
           accessToken,
         })
+
+        const name = middleware.constructor.name
+        request.pre = {
+          ...request.pre,
+          [name]: {
+            ...response,
+            ...request.pre?.[name],
+          },
+        }
+
         return response
       }
     })
+  }
+
+  #requestPreToPayload(request) {
+    return Object.values(request.pre || {}).reduce((allObjects, currObject) => {
+      allObjects = {
+        ...allObjects,
+        ...currObject,
+      }
+
+      return allObjects
+    }, {})
   }
 
   #replaceIfHasParams(path) {
@@ -90,17 +113,15 @@ export class HapiHTTPServer extends BaseHTTPServer {
           if (middlewares) {
             const adaptedMiddlewares = this.#adaptMiddlewares(middlewares)
 
-            await Promise.all(
-              adaptedMiddlewares.map(
-                async middleware => await middleware(request, reply)
-              )
-            )
+            for (const middleware of adaptedMiddlewares) {
+              await middleware(request, reply)
+            }
           }
 
           const response = await callback({
             ...request.query,
             ...request.params,
-            ...Object.assign({}, Object.values(request.pre)),
+            ...this.#requestPreToPayload(request),
           })
 
           return response
@@ -121,16 +142,14 @@ export class HapiHTTPServer extends BaseHTTPServer {
         try {
           if (middlewares) {
             const adaptedMiddlewares = this.#adaptMiddlewares(middlewares)
-
-            await Promise.all(
-              adaptedMiddlewares.map(
-                async middleware => await middleware(request, reply)
-              )
-            )
+            for (const middleware of adaptedMiddlewares) {
+              await middleware(request, reply)
+            }
           }
 
           const response = await callback({
             ...request.payload,
+            ...this.#requestPreToPayload(request),
           })
 
           return response
@@ -151,16 +170,15 @@ export class HapiHTTPServer extends BaseHTTPServer {
           if (middlewares) {
             const adaptedMiddlewares = this.#adaptMiddlewares(middlewares)
 
-            await Promise.all(
-              adaptedMiddlewares.map(
-                async middleware => await middleware(request, reply)
-              )
-            )
+            for (const middleware of adaptedMiddlewares) {
+              await middleware(request, reply)
+            }
           }
 
           const response = await callback({
             ...request.payload,
             ...request.params,
+            ...this.#requestPreToPayload(request),
           })
 
           return response
@@ -181,16 +199,16 @@ export class HapiHTTPServer extends BaseHTTPServer {
           if (middlewares) {
             const adaptedMiddlewares = this.#adaptMiddlewares(middlewares)
 
-            await Promise.all(
-              adaptedMiddlewares.map(
-                async middleware => await middleware(request, reply)
-              )
-            )
+           
+            for (const middleware of adaptedMiddlewares) {
+              await middleware(request, reply)
+            }
           }
 
           const response = await callback({
             ...request.payload,
             ...request.params,
+            ...this.#requestPreToPayload(request),
           })
 
           return response
@@ -211,15 +229,14 @@ export class HapiHTTPServer extends BaseHTTPServer {
           if (middlewares) {
             const adaptedMiddlewares = this.#adaptMiddlewares(middlewares)
 
-            await Promise.all(
-              adaptedMiddlewares.map(
-                async middleware => await middleware(request, reply)
-              )
-            )
+            for (const middleware of adaptedMiddlewares) {
+              await middleware(request, reply)
+            }
           }
 
           const response = await callback({
             ...request.params,
+            ...this.#requestPreToPayload(request),
           })
 
           return response
