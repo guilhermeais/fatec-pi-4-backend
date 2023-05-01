@@ -12,12 +12,12 @@ export class AuthMiddleware {
     if (!accessToken) {
       throw new UnauthorizedError({
         message: 'Faltando o token de usuário na requisição!',
-        action: 'Autentique-se novamente.'
+        action: 'Autentique-se novamente.',
       })
     }
 
     const user = await this.#loadUserByToken.execute({ accessToken })
 
-    return user
+    return { user }
   }
 }

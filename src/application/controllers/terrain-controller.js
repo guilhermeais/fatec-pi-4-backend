@@ -3,6 +3,7 @@ export class TerrainController {
   #updateTerrainUseCase
   #readTerrainUseCase
   #deleteTerrainUseCase
+  #readUserTerrainsUseCase
   /**
    *
    * @param {{
@@ -10,20 +11,31 @@ export class TerrainController {
    *  updateTerrainUseCase: import('../usecases/terrain/update-terrain-by-id').UpdateTerrainById
    *  readTerrainUseCase: import('../usecases/terrain/read-terrain-by-id').ReadTerrain
    *  deleteTerrainUseCase: import('../usecases/terrain/delete-terrain-by-id').DeleteTerrainById
+   * readUserTerrainsUseCase: import('../usecases/terrain/read-user-terrains').ReadUserTerrains
    * }} dependencies
    */
-  constructor({ createTerrainUseCase, updateTerrainUseCase, readTerrainUseCase, deleteTerrainUseCase } = {}) {
+  constructor({
+    createTerrainUseCase,
+    updateTerrainUseCase,
+    readTerrainUseCase,
+    deleteTerrainUseCase,
+    readUserTerrainsUseCase,
+  } = {}) {
     this.#createTerrainUseCase = createTerrainUseCase
     this.#updateTerrainUseCase = updateTerrainUseCase
     this.#readTerrainUseCase = readTerrainUseCase
     this.#deleteTerrainUseCase = deleteTerrainUseCase
+    this.#readUserTerrainsUseCase = readUserTerrainsUseCase
   }
 
   async createTerrain(request) {
-    const { ownerId, name, locations } = request
+    const {
+      name,
+      locations,
+    } = request
 
     const result = await this.#createTerrainUseCase.execute({
-      ownerId,
+      ownerId: request.user.id,
       name,
       locations,
     })
@@ -46,6 +58,12 @@ export class TerrainController {
     const { id } = request
 
     const result = await this.#readTerrainUseCase.execute(id)
+
+    return result
+  }
+
+  async readUserTerrains(request) {
+    const result = await this.#readUserTerrainsUseCase.execute(request.user.id)
 
     return result
   }
