@@ -7,6 +7,8 @@ import { Terrain } from '../../../src/domain/entities/terrain'
 import { mockTerrain } from '../../mocks/domain/entities/terrain.mock'
 import { User } from '../../../src/domain/entities/user'
 import { Location } from '../../../src/domain/value-objects/location'
+import { env } from '../../../src/main/config/env'
+import * as jwt from 'jsonwebtoken'
 
 describe('TerrainController e2e tests', () => {
   beforeAll(async () => {
@@ -14,9 +16,9 @@ describe('TerrainController e2e tests', () => {
     await firebaseTestHelpers.testEnvironment.clearDatabase()
   })
 
-  beforeEach(async () => {
-    await firebaseTestHelpers.testEnvironment.clearDatabase()
-  })
+  // beforeEach(async () => {
+  //   await firebaseTestHelpers.testEnvironment.clearDatabase()
+  // })
 
   afterAll(async () => {
     await firebaseTestHelpers.testEnvironment.clearDatabase()
@@ -35,8 +37,13 @@ describe('TerrainController e2e tests', () => {
     return user
   }
 
-  async function createTerrain() {
-    const owner = await createUser()
+  async function makeAccessToken(user) {
+    const token = jwt.sign({ id: user.id }, env.JWT_SECRET)
+
+    return token
+  }
+
+  async function createTerrain(owner) {
     const terrain = Terrain.create({
       name: faker.address.streetName(),
       locations: [
@@ -52,9 +59,43 @@ describe('TerrainController e2e tests', () => {
     return terrain
   }
 
+  describe('GET /terrains', () => {
+    test('should return all user terrains', async () => {
+      const user = await createUser()
+      const [terrain, accessToken] = await Promise.all([
+        createTerrain(user),
+        makeAccessToken(user),
+      ])
+
+      const response = await supertest(app.app)
+        .get('/terrains')
+        .set('authorization', `Bearer ${accessToken}`)
+
+      expect(response.status).toBe(200)
+      expect(response.body.length).toEqual(1)
+      expect(response.body[0].id).toEqual(terrain.id)
+    })
+
+    test('should not show others users terrains', async () => {
+      const user = await createUser()
+      const accessToken = await makeAccessToken(user)
+
+      const otherUser = await createUser()
+      await createTerrain(otherUser)
+
+      const response = await supertest(app.app)
+        .get('/terrains')
+        .set('authorization', `Bearer ${accessToken}`)
+
+      expect(response.status).toBe(200)
+      expect(response.body.length).toEqual(0)
+    })
+  })
+
   describe('POST /terrains', () => {
     test('should return 201 with the terrain', async () => {
-      const owner = await createUser()
+      const user = await createUser()
+      const accessToken = await makeAccessToken(user)
       const request = {
         name: faker.address.streetName(),
         locations: [
@@ -63,10 +104,12 @@ describe('TerrainController e2e tests', () => {
             longitude: faker.address.longitude(),
           }),
         ],
-        ownerId: owner.id,
       }
 
-      const response = await supertest(app.app).post('/terrains').send(request)
+      const response = await supertest(app.app)
+        .post('/terrains')
+        .set('authorization', `Bearer ${accessToken}`)
+        .send(request)
 
       expect(response.status).toBe(200)
       expect(response.body.name).toEqual(request.name)
@@ -78,10 +121,12 @@ describe('TerrainController e2e tests', () => {
         .get()
 
       expect(userAtDatabase.val().name).toEqual(request.name)
+      expect(userAtDatabase.val().ownerId).toEqual(user.id)
     })
 
     test('should return 400 if location is invalid', async () => {
-      const owner = await createUser()
+      const user = await createUser()
+      const accessToken = await makeAccessToken(user)
       const request = {
         name: faker.address.streetName(),
         locations: [
@@ -90,45 +135,32 @@ describe('TerrainController e2e tests', () => {
             longitude: null,
           },
         ],
-        ownerId: owner.id,
       }
 
-      const response = await supertest(app.app).post('/terrains').send(request)
+      const response = await supertest(app.app)
+        .post('/terrains')
+        .set('authorization', `Bearer ${accessToken}`)
+        .send(request)
 
       expect(response.status).toBe(400)
       expect(response.body.error).toEqual('Longitude não informada.')
-    })
-
-    test('should return 400 if user does not exists', async () => {
-      const request = {
-        name: faker.address.streetName(),
-        locations: [
-          {
-            latitude: faker.address.latitude(),
-            longitude: faker.address.longitude(),
-          },
-        ],
-        ownerId: 'any_id',
-      }
-
-      const response = await supertest(app.app).post('/terrains').send(request)
-
-      expect(response.status).toBe(400)
-      expect(response.body.error).toEqual(
-        'Usuário dono do terreno não encontrado.'
-      )
     })
   })
 
   describe('PATCH /terrains/{id}', () => {
     test('should return 200 and update the existing terrain', async () => {
-      const terrain = await createTerrain()
+      const user = await createUser()
+      const [terrain, accessToken] = await Promise.all([
+        createTerrain(user),
+        makeAccessToken(user),
+      ])
       const request = {
         name: faker.address.streetName(),
       }
 
       const response = await supertest(app.app)
         .patch(`/terrains/${terrain.id}`)
+        .set('authorization', `Bearer ${accessToken}`)
         .send(request)
 
       expect(response.status).toBe(200)
@@ -140,10 +172,13 @@ describe('TerrainController e2e tests', () => {
       expect(updatedTerrain.name).toEqual(request.name)
       expect(updatedTerrain.name).not.toEqual(terrain.name)
     })
+    test('should return 401 if user is not terrain owner', async () => {
+      const user = await createUser()
+      const [accessToken] = await Promise.all([makeAccessToken(user)])
 
-    test('should return 400 if location is invalid', async () => {
-      const terrain = await createTerrain()
-      
+      const otherUser = await createUser()
+      const otherUserTerrain = await createTerrain(otherUser)
+
       const request = {
         name: faker.address.streetName(),
         locations: [
@@ -153,31 +188,87 @@ describe('TerrainController e2e tests', () => {
           },
         ],
       }
+      const response = await supertest(app.app)
+        .patch(`/terrains/${otherUserTerrain.id}`)
+        .set('authorization', `Bearer ${accessToken}`)
+        .send(request)
 
-      const response = await supertest(app.app).patch('/terrains/'.concat(terrain.id)).send(request)
+      expect(response.status).toBe(401)
+      expect(response.body.error).toEqual(
+        'Você não pode atualizar um terreno que não é seu!'
+      )
+    })
+
+    test('should return 400 if location is invalid', async () => {
+      const user = await createUser()
+      const [terrain, accessToken] = await Promise.all([
+        createTerrain(user),
+        makeAccessToken(user),
+      ])
+
+      const request = {
+        name: faker.address.streetName(),
+        locations: [
+          {
+            latitude: faker.address.latitude(),
+            longitude: null,
+          },
+        ],
+      }
+      const response = await supertest(app.app)
+        .patch(`/terrains/${terrain.id}`)
+        .set('authorization', `Bearer ${accessToken}`)
+        .send(request)
 
       expect(response.status).toBe(400)
       expect(response.body.error).toEqual('Longitude não informada.')
+    })
+  })
+
+  describe('DELETE /terrains/{id}', () => {
+    test('should return 200 and delete the existing terrain', async () => {
+      const user = await createUser()
+      const [terrain, accessToken] = await Promise.all([
+        createTerrain(user),
+        makeAccessToken(user),
+      ])
+
+      const response = await supertest(app.app)
+        .delete(`/terrains/${terrain.id}`)
+        .set('authorization', `Bearer ${accessToken}`)
+
+      expect(response.status).toBe(204)
+
+      const deletedTerrainDb = (
+        await database.ref(`terrains/${terrain.id}`).get()
+      ).toJSON()
+
+      expect(deletedTerrainDb).toBeNull()
+    })
+
+    test('should return 401 if the user is not the terrain owner', async () => {
+      const user = await createUser()
+      const [accessToken] = await Promise.all([makeAccessToken(user)])
+
+      const otherUser = await createUser()
+      const otherUserTerrain = await createTerrain(otherUser)
+
+      const response = await supertest(app.app)
+        .delete(`/terrains/${otherUserTerrain.id}`)
+        .set('authorization', `Bearer ${accessToken}`)
+
+      expect(response.status).toBe(401)
+    })
+
+    test('should return 404 if the terrain does not exists', async () => {
+      const user = await createUser()
+      const accessToken = await makeAccessToken(user)
+
+      const response = await supertest(app.app)
+        .delete(`/terrains/${faker.datatype.uuid()}`)
+        .set('authorization', `Bearer ${accessToken}`)
+
+      expect(response.status).toBe(404)
     });
-
-    // test('should return 400 if user does not exists', async () => {
-    //   const request = {
-    //     name: faker.address.streetName(),
-    //     locations: [
-    //       {
-    //         latitude: faker.address.latitude(),
-    //         longitude:  faker.address.longitude(),
-    //       },
-    //     ],
-    //     ownerId: 'any_id',
-    //   }
-
-    //   const response = await supertest(app.app).post('/terrains').send(request)
-
-    //   expect(response.status).toBe(400)
-    //   expect(response.body.error).toEqual(
-    //     'Usuário dono do terreno não encontrado.'
-    //   )
-    // });
   })
 })
