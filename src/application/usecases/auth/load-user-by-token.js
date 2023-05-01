@@ -13,16 +13,25 @@ export class LoadUserByToken {
 
   async execute({ accessToken }) {
     let user = null
+    let decrypted = null
+    const token = accessToken.split(' ').pop()
 
     try {
-      const { id: userId } = await this.decrypter.decrypt(accessToken)
-
-      user = await this.userRepository.findById(userId)
+      decrypted = await this.decrypter.decrypt(token)
     } catch (error) {
       throw new UnauthorizedError({
         message: `Token inválido: ${error.message}`,
       })
     }
+
+    if (!decrypted) {
+      throw new UnauthorizedError({
+        message: 'Token inválido!',
+      })
+    }
+    const { id: userId } = decrypted
+
+    user = await this.userRepository.findById(userId)
 
     if (!user) {
       throw new UnauthorizedError()
